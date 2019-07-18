@@ -39,8 +39,8 @@ module TestSummaryBuildkitePlugin
           FileUtils.remove_dir(WORKDIR, force: true)
           FileUtils.mkpath(WORKDIR)
           arguments = ['artifact', 'download', artifact_path, WORKDIR] 
-          arguments += ['--step', options[:step]] if options[:step]
-          Agent.run(arguments)
+          arguments += ['--step', "'" + options[:step]  + "'"] if options[:step]
+          Agent.run(*arguments)
           Dir.glob("#{WORKDIR}/#{artifact_path}")
         rescue Agent::CommandFailed => err
           if fail_on_error
