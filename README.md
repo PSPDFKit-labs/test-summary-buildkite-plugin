@@ -86,6 +86,7 @@ The plugin takes a list of input sources. Each input source has:
 
 * `label:` the name used in the heading to identify the test group.
 * `artifact_path:` a glob used to download one or more artifacts.
+* `step:` Scope the search to a paticular step by using either it's name or job.
 * `type:` one of `junit`, `checkstyle`, `tap` or `oneline`.
 * `encoding:` The file encoding to use. Defaults to `UTF-8`.
 * `strip_colors:` Remove ANSI color escape sequences. Defaults to `false`.
