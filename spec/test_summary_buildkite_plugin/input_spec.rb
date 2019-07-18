@@ -240,6 +240,39 @@ severity: fail')
     end
   end
 
+  describe 'androidLint' do
+    let(:type) { 'androidLint' }
+    let(:artifact_path) { 'android-lint.xml' }
+
+    it { is_expected.to be_a(TestSummaryBuildkitePlugin::Input::AndroidLint) }
+
+    it 'has one failure' do
+      expect(input.failures.count).to eq(1)
+    end
+
+    it 'failure has message' do
+      expect(input.failures[0].message).to eq('A newer version of com.google.android.material:material than 1.1.0-alpha02 is available: 1.1.0-alpha08')
+    end
+    it 'failure has summary' do
+      expect(input.failures[0].summary).to eq(
+        '[Warning] app/build.gradle:133:5: A newer version of com.google.android.material:material than 1.1.0-alpha02 is available: 1.1.0-alpha08'
+      )
+    end
+
+    it 'failure has detail' do
+      expect(input.failures.first.details).to eq(
+        'Obsolete Gradle Dependency
+
+```
+    implementation "com.google.android.material:material:${ANDROID_MATERIAL_VERSION}"
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find.'
+      )
+    end
+  end
+
   describe 'setting ascii encoding' do
     let(:type) { 'oneline' }
     let(:artifact_path) { 'eslint-00112233-0011-0011-0011-001122334455.txt' }
