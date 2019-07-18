@@ -36,6 +36,7 @@ module TestSummaryBuildkitePlugin
 
       def files
         @files ||= begin
+          FileUtils.remove_dir(WORKDIR)
           FileUtils.mkpath(WORKDIR)
           Agent.run('artifact', 'download', artifact_path, WORKDIR, '--step', label)
           Dir.glob("#{WORKDIR}/#{artifact_path}")
