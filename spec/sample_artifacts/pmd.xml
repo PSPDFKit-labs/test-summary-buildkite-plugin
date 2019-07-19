@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     timestamp="2019-07-18T12:10:28.023"
+     version="6.7.0"
+     xmlns="http://pmd.sourceforge.net/report/2.0.0"
+     xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd">
+  <file name="app/src/main/java/com/example/FooBar.java">
+    <violation begincolumn="20" beginline="341" class="FooBarBaz"
+               endcolumn="48" endline="341"
+               externalInfoUrl="https://pmd.github.io/pmd-6.7.0/pmd_rules_java_design.html#lawofdemeter"
+               method="getSomethingFromHere"
+               package="com.example"
+               priority="3"
+               rule="LawOfDemeter"
+               ruleset="Design">
+      Potential violation of Law of Demeter (method chain calls)
+    </violation>
+    <violation begincolumn="48" beginline="46" class="FooBarBaz"
+               endcolumn="71" endline="46"
+               externalInfoUrl="https://pmd.github.io/pmd-6.7.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal"
+               method="initialize" package="com.example" priority="3"
+               rule="MethodArgumentCouldBeFinal"
+               ruleset="Code Style"
+               variable="context">
+      Parameter 'context' is not assigned and could be declared final
+    </violation>
+  </file>
+  <file name="app/src/main/java/com/example/ping/PingPong.java">
+    <violation begincolumn="1" beginline="13" class="PingPong"
+               endcolumn="61" endline="13"
+               externalInfoUrl="https://pmd.github.io/pmd-6.7.0/pmd_rules_java_bestpractices.html#unusedimports"
+               package="com.example.ping" priority="4"
+               rule="UnusedImports"
+               ruleset="Best Practices">
+      Avoid unused imports such as
+      'com.pspdfkit.instant.client.InstantDocumentDescriptor'
+    </violation>
+  </file>
+</pmd>
