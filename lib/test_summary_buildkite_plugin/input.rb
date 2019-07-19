@@ -285,12 +285,84 @@ module TestSummaryBuildkitePlugin
 #{issue.attribute('explanation').value}"
       end
     end
+
+    class Pmd < Base
+      def file_contents_to_failures(str)
+        xml = REXML::Document.new(str)
+        xml.elements.enum_for(:each, '//file').flat_map do |file|
+          filename = file.attribute('name').value
+          file.elements.map do |violation|
+            Failure::Structured.new(
+              summary: summary(filename, violation),
+              message: message(violation),
+              details: details(filename, violation)
+            )
+          end
+        end
+      end
+
+      private
+
+      def summary(filename, violation)
+        severity = priority_to_severity_label(violation.attribute('priority')&.value)
+        location = get_location(filename, violation)
+        message = message(violation)
+        "[#{severity}] #{location}: #{message}"
+      end
+
+
+      def message(violation)
+        violation.text.strip
+      end
+
+      def details(filename, violation)
+        details = ["Rule: #{violation.attribute('rule').value}
+
+File: #{filename}
+Package: #{violation.attribute('package').value}"]
+        details.push("Class: #{violation.attribute('class').value}") unless violation.attribute('class').nil?
+        details.push("Method: #{violation.attribute('method').value}") unless violation.attribute('method').nil?
+        details.push("Variable: #{violation.attribute('variable').value}") unless violation.attribute('variable').nil?
+        details.push("\n#{violation.text.strip}")
+        details.push(violation.attribute('externalInfoUrl').value) unless violation.attribute('externalInfoUrl').nil?
+        details.join("\n")
+      end
+
+      ##
+      # Maps PMD priority integer to a human readable label for annotating.
+      # @param priority An integer in `1..5` denoting the priority of the issue.
+      # @return A human readable label.
+      def priority_to_severity_label(priority)
+        case priority
+        when '1'
+          'Change Required'
+        when '2'
+          'Change Highly Recommended'
+        when '3'
+          'Change Recommended'
+        when '4'
+          'Change Optional'
+        when '5'
+          'Change Highly Optional'
+        else
+          'Unknown'
+        end
+      end
+
+      def get_location(filename, violation)
+        line = violation.attribute('beginline')&.value
+        column = violation.attribute('begincolumn')&.value
+        [filename, line, column].compact.join(':')
+      end
+    end
+
     TYPES = {
       oneline: Input::OneLine,
       junit: Input::JUnit,
       tap: Input::Tap,
       checkstyle: Input::Checkstyle,
-      androidLint: Input::AndroidLint
+      androidLint: Input::AndroidLint,
+      pmd: Input::Pmd
     }.freeze
   end
 end

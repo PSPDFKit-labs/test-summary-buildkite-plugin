@@ -273,6 +273,71 @@ This detector looks for usages of libraries where the version you are using is n
     end
   end
 
+  describe 'pmd' do
+    let(:type) {'pmd'}
+    let(:artifact_path) {'pmd.xml'}
+
+    it {is_expected.to be_a(TestSummaryBuildkitePlugin::Input::Pmd)}
+
+    it 'has all violations' do
+      expect(input.failures.count).to eq(3)
+    end
+
+    it 'violation has message' do
+      expect(input.failures[1].message).to eq(
+        'Potential violation of Law of Demeter (method chain calls)'
+      )
+    end
+    it 'failure has summary' do
+      expect(input.failures[1].summary).to eq(
+        '[Change Recommended] app/src/main/java/com/example/FooBar.java:341:20: Potential violation of Law of Demeter (method chain calls)'
+      )
+    end
+
+    it 'argument failure has detail' do
+      expect(input.failures[2].details).to eq(
+        'Rule: MethodArgumentCouldBeFinal
+
+File: app/src/main/java/com/example/FooBar.java
+Package: com.example
+Class: FooBarBaz
+Method: initialize
+Variable: context
+
+Parameter \'context\' is not assigned and could be declared final
+https://pmd.github.io/pmd-6.7.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal'
+      )
+    end
+
+    it 'method failure has detail' do
+      expect(input.failures[1].details).to eq(
+        'Rule: LawOfDemeter
+
+File: app/src/main/java/com/example/FooBar.java
+Package: com.example
+Class: FooBarBaz
+Method: getSomethingFromHere
+
+Potential violation of Law of Demeter (method chain calls)
+https://pmd.github.io/pmd-6.7.0/pmd_rules_java_design.html#lawofdemeter'
+      )
+    end
+
+    it 'package failure has detail' do
+      expect(input.failures[0].details).to eq(
+        'Rule: UnusedImports
+
+File: app/src/main/java/com/example/ping/PingPong.java
+Package: com.example.ping
+Class: PingPong
+
+Avoid unused imports such as
+      \'com.pspdfkit.instant.client.InstantDocumentDescriptor\'
+https://pmd.github.io/pmd-6.7.0/pmd_rules_java_bestpractices.html#unusedimports'
+      )
+    end
+  end
+
   describe 'setting ascii encoding' do
     let(:type) { 'oneline' }
     let(:artifact_path) { 'eslint-00112233-0011-0011-0011-001122334455.txt' }
