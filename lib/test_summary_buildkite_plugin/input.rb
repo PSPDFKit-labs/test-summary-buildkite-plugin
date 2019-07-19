@@ -238,14 +238,22 @@ module TestSummaryBuildkitePlugin
       end
 
       def details(issue)
-        "#{issue.attribute('summary').value}
+        details = issue.attribute('summary').value.to_s.dup
+
+        unless issue.attribute('errorLine1').nil? || issue.attribute('errorLine2').nil?
+          details.concat("
 
 ```
 #{issue.attribute('errorLine1').value}
 #{issue.attribute('errorLine2').value}
-```
+```")
+        end
 
-#{issue.attribute('explanation').value}"
+        unless issue.attribute('explanation').nil?
+          details.concat("
+
+#{issue.attribute('explanation').value}")
+        end
       end
     end
 
