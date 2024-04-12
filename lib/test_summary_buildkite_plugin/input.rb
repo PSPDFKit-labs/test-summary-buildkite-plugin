@@ -213,16 +213,15 @@ module TestSummaryBuildkitePlugin
     class AndroidLint < Base
       def file_contents_to_failures(str)
         xml = REXML::Document.new(str)
-        xml.elements.enum_for(:each, '//issue').flat_map do |issue|
+        xml.elements.enum_for(:each, '//issue').each_with_object([]) do |issue, array|
           # Skip info (these are usually suppressed from the baseline file)
-          if issue.attribute('severity')&.value == "Information"
-            next
+          unless issue.attribute('severity')&.value == "Information"
+            array << Failure::Structured.new(
+              summary: summary(issue),
+              message: message(issue),
+              details: details(issue)
+            )
           end
-          Failure::Structured.new(
-            summary: summary(issue),
-            message: message(issue),
-            details: details(issue)
-          )
         end
       end
 
