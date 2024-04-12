@@ -214,6 +214,10 @@ module TestSummaryBuildkitePlugin
       def file_contents_to_failures(str)
         xml = REXML::Document.new(str)
         xml.elements.enum_for(:each, '//issue').flat_map do |issue|
+          # Skip info (these are usually suppressed from the baseline file)
+          if issue.attribute('severity')&.value == "Information"
+            next
+          end
           Failure::Structured.new(
             summary: summary(issue),
             message: message(issue),
